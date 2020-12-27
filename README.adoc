@@ -1,0 +1,52 @@
+= Config Server
+:toc:
+
+
+== Externalized configuration
+
+The server is embeddable in a Spring Boot application, by using the `@EnableConfigServer` annotation.
+
+	@SpringBootApplication
+	@EnableConfigServer
+	public class ConfigServerApplication { ... } 
+	
+and adding project dependencies in `pom.xml` file
+
+	<dependency>
+		<groupId>org.springframework.cloud</groupId>
+		<artifactId>spring-cloud-config-server</artifactId>
+	</dependency>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>	
+	
+Like all Spring Boot applications, it runs on port `8080` by default, but you can switch it to the more conventional port `8888` in `application.properties` file.
+
+
+	server.port: 8888
+	spring.cloud.config.server.git.uri: file://${user.home}/config-repo
+	
+where `${user.home}/config-repo` is a git repository containing YAML and properties files (https://github.com/wanderleisouza/config-repo for me).
+
+The Git-backed configuration API provided by our server can be queried using the following paths:
+
+
+	/{application}/{profile}[/{label}]
+	/{application}-{profile}.yml
+	/{label}/{application}-{profile}.yml
+	/{application}-{profile}.properties
+	/{label}/{application}-{profile}.properties
+
+	
+just start ther *config-server* as any spring-boot application
+
+	mvn spring-boot:run
